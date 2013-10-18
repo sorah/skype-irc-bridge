@@ -8,6 +8,7 @@ import Skype4Py
 import os
 import time
 from SimpleXMLRPCServer import SimpleXMLRPCServer
+from socket import error as socket_error
 from configobj import ConfigObj
 import sys, xmlrpclib, socket
 
@@ -91,8 +92,11 @@ class SkypeIrcBridge():
 			self._pass_to_irc(self.skype.Message(payload[1]), deleted=(not payload[3]), body=payload[3])
 		elif CONFIG['irc'].has_key('dump_all_notification'):
 			print '[RAW] ' + notification
-			SkypeIrcBridge.irc.say(False, notification)
-			print 'done'
+			try:
+				SkypeIrcBridge.irc.say(False, notification.encode('utf-8'))
+				print 'done'
+			except socket_error:
+				print 'fail'
 
 	def say(self, channel, msg):
 		room = self.skype.Chat(channel)
