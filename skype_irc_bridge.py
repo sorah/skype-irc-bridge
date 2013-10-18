@@ -27,30 +27,31 @@ class SkypeIrcBridge():
 		if event == u"RECEIVED":
 			self._pass_to_irc(msg)
 
-	def _pass_to_irc(self, msg, deleted=False):
+	def _pass_to_irc(self, msg, deleted=False, body=False):
 			said = False
 			for key in CONFIG:
 				if key == 'skype' or key == 'irc':
 					continue
 				if CONFIG[key].has_key('skype') and msg.ChatName == CONFIG[key]['skype'] and CONFIG[key].has_key('irc'):
 					said = True
-					self._pass_to_irc_core(CONFIG[key]['irc'], msg, deleted=deleted)
+					self._pass_to_irc_core(CONFIG[key]['irc'], msg, deleted=deleted, body=body)
 			if not said:
-				self._pass_to_irc_core(False, msg, deleted=deleted)
+				self._pass_to_irc_core(False, msg, deleted=deleted, body=body)
 
 	@staticmethod
-	def _pass_to_irc_core(channel, msg, deleted=False):
+	def _pass_to_irc_core(channel, msg, deleted=False, body=False):
 		name = msg.Sender.FullName
 		if len(name) == 0 or len(name) > 16:
 			name = msg.Sender.Handle
 
+		body = (body or msg.Body).splitlines()
 		if msg.Type == "SETTOPIC" and channel:
-			topic = u' '.join(msg.Body.splitlines()).encode('utf-8')
+			topic = u' '.join(body).encode('utf-8')
 			print 'Skype(%s)->IRC %s [TOPIC] %s' % (msg.ChatName, channel, topic)
 			SkypeIrcBridge.irc.set_topic(channel, topic)
 			print 'done'
 
-		for line in msg.Body.splitlines():
+		for line in body:
 			if msg.Type != 'SAID':
 				name = '[%s] %s' % (msg.Type, name)
 
@@ -87,7 +88,7 @@ class SkypeIrcBridge():
 	def handler_notify(self, notification):
 		payload = notification.split(' ')
 		if payload[0] == 'CHATMESSAGE' and payload[2] == 'BODY':
-			self._pass_to_irc(self.skype.Message(payload[1]), deleted=(not payload[3]))
+			self._pass_to_irc(self.skype.Message(payload[1]), deleted=(not payload[3]), body=payload[3])
 		elif CONFIG['irc'].has_key('dump_all_notification'):
 			print '[RAW] ' + notification
 			SkypeIrcBridge.irc.say(False, notification)
