@@ -1,0 +1,4 @@
+irc == 8.5.3
+Skype4Py == 1.0.35
+honcho == 0.4.2
+configobj == 4.7.2
