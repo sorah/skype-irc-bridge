@@ -7,6 +7,7 @@ server = 'localhost'
 xmlrpc_port = 12860
 xmlrpc_host = localhost
 default_channel = '#skype-bridge'
+dump_all_notification = true
 nick = 'skype'
 host = 'localhost'
 port = 6667

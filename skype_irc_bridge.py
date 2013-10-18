@@ -27,26 +27,26 @@ class SkypeIrcBridge():
 		if event == u"RECEIVED":
 			self._pass_to_irc(msg)
 
-	def _pass_to_irc(self, msg):
+	def _pass_to_irc(self, msg, deleted=False):
 			said = False
 			for key in CONFIG:
 				if key == 'skype' or key == 'irc':
 					continue
 				if CONFIG[key].has_key('skype') and msg.ChatName == CONFIG[key]['skype'] and CONFIG[key].has_key('irc'):
 					said = True
-					self._pass_to_irc_core(CONFIG[key]['irc'], msg)
+					self._pass_to_irc_core(CONFIG[key]['irc'], msg, deleted=deleted)
 			if not said:
-				self._pass_to_irc_core(False, msg)
+				self._pass_to_irc_core(False, msg, deleted=deleted)
 
 	@staticmethod
-	def _pass_to_irc_core(channel, msg):
+	def _pass_to_irc_core(channel, msg, deleted=False):
 		name = msg.Sender.FullName
 		if len(name) == 0 or len(name) > 16:
 			name = msg.Sender.Handle
 
 		if msg.Type == "SETTOPIC" and channel:
 			topic = u' '.join(msg.Body.splitlines()).encode('utf-8')
-			print '%s Skype->IRC %s [TOPIC] %s' % (msg.ChatName, channel, topic)
+			print 'Skype(%s)->IRC %s [TOPIC] %s' % (msg.ChatName, channel, topic)
 			SkypeIrcBridge.irc.set_topic(channel, topic)
 			print 'done'
 
@@ -54,21 +54,27 @@ class SkypeIrcBridge():
 			if msg.Type != 'SAID':
 				name = '[%s] %s' % (msg.Type, name)
 
-			if msg.EditedBy:
+			if deleted:
+				if (not msg.EditedBy) or msg.EditedBy == msg.Sender.Handle:
+					name = '[DELETED] ' + name
+				else:
+					name = '[DELETED BY %s] %s' % (msg.EditedBy, name)
+			elif msg.EditedBy:
 				if msg.EditedBy == msg.Sender.Handle:
 					name = '[EDITED] ' + name
 				else:
 					name = '[EDITED BY %s] %s' % (msg.EditedBy, name)
 
+
 			if channel:
 				text = '%s: %s' % (name, line)
 				text = text.encode('utf-8')
-				print '%s Skype->IRC %s: %s' % (msg.ChatName, channel, text)
+				print 'Skype(%s)->IRC %s: %s' % (msg.ChatName, channel, text)
 			else:
 				topic = msg.Chat.Topic
 				text = '(%s) %s: %s [%s]' % (topic, name, line, msg.ChatName)
 				text = text.encode('utf-8')
-				print '%s (%s) Skype->IRC DEFAULT: %s' % (msg.ChatName, topic, text)
+				print 'Skype(%s)->IRC DEFAULT: %s' % (msg.ChatName,  text)
 
 			SkypeIrcBridge.irc.say(channel, text)
 			print 'done'
@@ -81,7 +87,11 @@ class SkypeIrcBridge():
 	def handler_notify(self, notification):
 		payload = notification.split(' ')
 		if payload[0] == 'CHATMESSAGE' and payload[2] == 'BODY':
-			self._pass_to_irc(self.skype.Message(payload[1]))
+			self._pass_to_irc(self.skype.Message(payload[1]), deleted=(not payload[3]))
+		elif CONFIG['irc'].has_key('dump_all_notification'):
+			print '[RAW] ' + notification
+			SkypeIrcBridge.irc.say(False, notification)
+			print 'done'
 
 	def say(self, channel, msg):
 		room = self.skype.Chat(channel)
