@@ -1,0 +1,16 @@
+[skype]
+xmlrpc_port = 12861
+xmlrpc_host = localhost
+
+[irc]
+server = 'localhost'
+xmlrpc_port = 12860
+xmlrpc_host = localhost
+default_channel = '#skype-bridge'
+nick = 'skype'
+host = 'localhost'
+port = 6667
+
+[foobar]
+skype = "#foobar/$abcdef"
+irc   = "#foobar"
