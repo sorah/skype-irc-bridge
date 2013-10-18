@@ -71,12 +71,18 @@ class SkypeIrcBridge():
 
 	def say(self, channel, msg):
 		room = self.skype.Chat(channel)
-		print "IRC->Skype %s %s" % (channel, msg)
+		print "Skype(%s)<-IRC: %s" % (channel, msg)
 		room.SendMessage(msg)
 		return True
 
 	def get_topic(self, chatname):
 		return self.skype.Chat(chatname).Topic
+
+	def set_topic(self, chatname, topic):
+		print "[SETTOPIC] Skype(%s)<-IRC: %s" % (chatname, topic)
+		self.skype.Chat(chatname).Topic = topic
+		return True
+
 
 	def start(self):
 		self.skype.OnMessageStatus = self.handler
