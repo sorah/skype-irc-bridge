@@ -13,7 +13,11 @@ from socket import error as socket_error
 from configobj import ConfigObj
 import sys, xmlrpclib, socket
 
-CONFIG = ConfigObj("bridge.conf")
+if len(sys.argv) == 2:
+	CONFIG = ConfigObj(sys.argv[1])
+else:
+	CONFIG = ConfigObj("bridge.conf")
+
 
 class SkypeIrcBridge():
 	xmlrpc_host = CONFIG['irc']['xmlrpc_host']

@@ -11,7 +11,10 @@ from SimpleXMLRPCServer import SimpleXMLRPCServer
 
 import sys, xmlrpclib, threading
 
-CONFIG = ConfigObj("bridge.conf")
+if len(sys.argv) == 2:
+	CONFIG = ConfigObj(sys.argv[1])
+else:
+	CONFIG = ConfigObj("bridge.conf")
 
 class IrcSkypeBridge(SingleServerIRCBot):
 	def __init__(self, server = 'localhost'):
