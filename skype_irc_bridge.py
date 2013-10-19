@@ -78,7 +78,7 @@ class SkypeIrcBridge():
 				text = u'%s: %s' % (name, line)
 				print u'Skype(%s)->IRC %s: %s' % (msg.ChatName, channel, text)
 			else:
-				topic = unicode(msg.Chat.Topic, 'UTF-8')
+				topic = msg.Chat.Topic
 				text = u'(%s) %s: %s [%s]' % (topic, name, line, msg.ChatName)
 				print u'Skype(%s)->IRC DEFAULT: %s' % (msg.ChatName,  text)
 
@@ -95,9 +95,9 @@ class SkypeIrcBridge():
 		if payload[0] == 'CHATMESSAGE' and payload[2] == 'BODY':
 			self._pass_to_irc(self.skype.Message(payload[1]), deleted=(not payload[3]), body=payload[3])
 		elif CONFIG['irc'].has_key('dump_all_notification'):
-			print '[RAW] ' + notification
+			print u'[RAW] %s' % notification
 			try:
-				SkypeIrcBridge.irc.say(False, notification)
+				SkypeIrcBridge.irc.say(False, notification.replace(u"\n", u""))
 				print 'done'
 			except socket_error:
 				print 'fail'
