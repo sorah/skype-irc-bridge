@@ -45,7 +45,7 @@ class IrcSkypeBridge(SingleServerIRCBot):
 				channel = CONFIG[key]['irc']
 				if channel == e.target:
 					if CONFIG[key].has_key('irc_with_nick'):
-						topic = '%s (by IRC %s)' % (e.arguments[0], e.source.nick)
+						topic = u'%s (by IRC %s)' % (e.arguments[0], e.source.nick)
 						self.skype.set_topic(CONFIG[key]['skype'], topic)
 					else:
 						topic = e.arguments[0]
@@ -55,12 +55,12 @@ class IrcSkypeBridge(SingleServerIRCBot):
 	def say(self, channel, msg):
 		if channel == False:
 			channel = self.channel
-		print "IRC<-Skype %s %s" % (channel, msg)
+		print u"IRC<-Skype %s %s" % (channel, msg)
 		self.connection.privmsg(channel, msg)
 		return True
 
 	def set_topic(self, channel, topic):
-		print "[TOPIC] IRC<-Skype %s %s" % (channel, topic)
+		print u"[TOPIC] IRC<-Skype %s %s" % (channel, topic)
 		self.connection.topic(channel, topic)
 		return True
 
@@ -71,7 +71,7 @@ class IrcSkypeBridge(SingleServerIRCBot):
 	def handler(self, c, e):
 		nick = e.source.nick
 		msg = e.arguments[0]
-		text_with_nick = '%s: %s' % (nick, msg)
+		text_with_nick = u'%s: %s' % (nick, msg)
 		for key in CONFIG:
 			if key == 'skype' or key == 'irc':
 				continue

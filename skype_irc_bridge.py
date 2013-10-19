@@ -48,7 +48,7 @@ class SkypeIrcBridge():
 
 		body = (body or msg.Body).splitlines()
 		if msg.Type == "SETTOPIC" and channel:
-			topic = u' '.join(body).encode('utf-8')
+			topic = u' '.join(body)
 			print 'Skype(%s)->IRC %s [TOPIC] %s' % (msg.ChatName, channel, topic)
 			SkypeIrcBridge.irc.set_topic(channel, topic)
 			print 'done'
@@ -69,15 +69,14 @@ class SkypeIrcBridge():
 					name = '[EDITED BY %s] %s' % (msg.EditedBy, name)
 
 
+			name = unicode(name, 'UTF-8')
 			if channel:
-				text = '%s: %s' % (name, line)
-				text = text.encode('utf-8')
-				print 'Skype(%s)->IRC %s: %s' % (msg.ChatName, channel, text)
+				text = u'%s: %s' % (name, line)
+				print u'Skype(%s)->IRC %s: %s' % (msg.ChatName, channel, text)
 			else:
-				topic = msg.Chat.Topic
-				text = '(%s) %s: %s [%s]' % (topic, name, line, msg.ChatName)
-				text = text.encode('utf-8')
-				print 'Skype(%s)->IRC DEFAULT: %s' % (msg.ChatName,  text)
+				topic = unicode(msg.Chat.Topic, 'UTF-8')
+				text = u'(%s) %s: %s [%s]' % (topic, name, line, msg.ChatName)
+				print u'Skype(%s)->IRC DEFAULT: %s' % (msg.ChatName,  text)
 
 			SkypeIrcBridge.irc.say(channel, text)
 			print 'done'
@@ -94,14 +93,14 @@ class SkypeIrcBridge():
 		elif CONFIG['irc'].has_key('dump_all_notification'):
 			print '[RAW] ' + notification
 			try:
-				SkypeIrcBridge.irc.say(False, notification.encode('utf-8'))
+				SkypeIrcBridge.irc.say(False, notification)
 				print 'done'
 			except socket_error:
 				print 'fail'
 
 	def say(self, channel, msg):
 		room = self.skype.Chat(channel)
-		print "Skype(%s)<-IRC: %s" % (channel, msg)
+		print u"Skype(%s)<-IRC: %s" % (channel, msg)
 		room.SendMessage(msg)
 		return True
 

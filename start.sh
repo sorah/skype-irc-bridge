@@ -15,5 +15,6 @@ export LC_TELEPHONE="en_US.UTF-8"
 export LC_MEASUREMENT="en_US.UTF-8"
 export LC_IDENTIFICATION="en_US.UTF-8"
 export LC_ALL=
+export PYTHONIOENCODING=utf-8
 
 exec honcho start $*
