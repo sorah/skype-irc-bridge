@@ -17,7 +17,7 @@ export LC_IDENTIFICATION="en_US.UTF-8"
 export LC_ALL=
 export PYTHONIOENCODING=utf-8
 
-export DISPLAY=${DISPLAY:-64}
+export DISPLAY=${DISPLAY:-":64"}
 export XAUTHORITY="$(dirname $0)/.XAuthority"
 
 exec honcho start $*
