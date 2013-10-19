@@ -3,6 +3,7 @@
 # vim: noet sts=4:ts=4:sw=4
 # author: takano32 <tak at no32.tk>
 # modified-by: sorah <her at sorah.jp>
+# Distributed under the terms of the GNU General Public License v2
 
 import Skype4Py
 import os

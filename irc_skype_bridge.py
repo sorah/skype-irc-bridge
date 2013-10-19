@@ -3,6 +3,7 @@
 # vim: noet sts=4:ts=4:sw=4
 # author: takano32 <tak at no32.tk>
 # modified-by: sorah <her at sorah.jp>
+# Distributed under the terms of the GNU General Public License v2
 
 from irc.bot import SingleServerIRCBot
 from configobj import ConfigObj
