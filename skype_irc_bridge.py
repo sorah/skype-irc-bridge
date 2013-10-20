@@ -73,7 +73,6 @@ class SkypeIrcBridge():
 					name = '[EDITED BY %s] %s' % (msg.EditedBy, name)
 
 
-			name = unicode(name, 'UTF-8')
 			if channel:
 				text = u'%s: %s' % (name, line)
 				print u'Skype(%s)->IRC %s: %s' % (msg.ChatName, channel, text)
